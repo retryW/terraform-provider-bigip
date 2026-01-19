@@ -12,7 +12,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/f5devcentral/go-bigip"
 	bigip "github.com/f5devcentral/go-bigip"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -101,19 +100,7 @@ func resourceBigipLtmTrafficMatchingCriteriaCreate(ctx context.Context, d *schem
 	name := d.Get("name").(string)
 
 	log.Println("[INFO] Creating traffic matching criteria" + name)
-	tmc := &bigip.TrafficMatchingCriteria{
-		Name:                     d.Get("name"),
-		Description:              d.Get("description"),
-		Protocol:                 d.Get("protocol"),
-		RouteDomain:              d.Get("route_domain"),
-		DestinationAddressList:   d.Get("destination_address_list"),
-		DestinationAddressInline: d.Get("destination_address_inline"),
-		DestinationPortList:      d.Get("destination_port_list"),
-		DestinationPortInline:    d.Get("destination_port_inline"),
-		SourceAddressList:        d.Get("source_address_list"),
-		SourceAddressInline:      d.Get("source_address_inline"),
-		SourcePortInline:         d.Get("source_port_inline"),
-	}
+	tmc := NewTmcFromResourceData(d)
 
 	err := client.AddTrafficMatchingCriteria(ctx, tmc)
 	if err != nil {
@@ -129,7 +116,7 @@ func resourceBigipLtmTrafficMatchingCriteriaRead(ctx context.Context, d *schema.
 	_ = d.Set("name", name)
 
 	log.Println("[INFO] Reading traffic matching criteria " + name)
-	tmc, err := client.ReadTrafficMatchingCriteria(name)
+	tmc, err := client.GetTrafficMatchingCriteria(ctx, name)
 	if err != nil && strings.Contains(err.Error(), "not found") {
 		log.Printf("[WARN] Traffic Matching Criteria (%s) not found, removing from state", name)
 		d.SetId("")
@@ -156,21 +143,10 @@ func resourceBigipLtmTrafficMatchingCriteriaRead(ctx context.Context, d *schema.
 func resourceBigipLtmTrafficMatchingCriteriaUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*bigip.BigIP)
 	name := d.Id()
-	tmc := &bigip.TrafficMatchingCriteria{
-		Description:              d.Get("description"),
-		Protocol:                 d.Get("protocol"),
-		RouteDomain:              d.Get("route_domain"),
-		DestinationAddressList:   d.Get("destination_address_list"),
-		DestinationAddressInline: d.Get("destination_address_inline"),
-		DestinationPortList:      d.Get("destination_port_list"),
-		DestinationPortInline:    d.Get("destination_port_inline"),
-		SourceAddressList:        d.Get("source_address_list"),
-		SourceAddressInline:      d.Get("source_address_inline"),
-		SourcePortInline:         d.Get("source_port_inline"),
-	}
+	tmc := NewTmcFromResourceData(d)
 
 	fmt.Println("[INFO] Attempting to update traffic matching criteria ", name)
-	err := client.UpdateTrafficMatchingCriteria(name, tmc)
+	err := client.ModifyTrafficMatchingCriteria(ctx, name, tmc)
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to update traffic matching criteria (%s) (%v)", name, err)
 		return diag.FromErr(err)
@@ -184,7 +160,7 @@ func resourceBigipLtmTrafficMatchingCriteriaDelete(ctx context.Context, d *schem
 	name := d.Id()
 
 	fmt.Println("[INFO] Attempting to delete traffing matching criteria " + name)
-	err := client.DeleteTrafficMatchingCriteria(name)
+	err := client.DeleteTrafficMatchingCriteria(ctx, name)
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to delete traffic matching criteria (%s) (%v)", name, err)
 		return diag.FromErr(err)
@@ -193,4 +169,19 @@ func resourceBigipLtmTrafficMatchingCriteriaDelete(ctx context.Context, d *schem
 	d.SetId("")
 
 	return nil
+}
+
+func NewTmcFromResourceData(d *schema.ResourceData) *bigip.TrafficMatchingCriteria {
+	return &bigip.TrafficMatchingCriteria{
+		Description:              d.Get("description").(string),
+		Protocol:                 d.Get("protocol").(string),
+		RouteDomain:              d.Get("route_domain").(string),
+		DestinationAddressList:   d.Get("destination_address_list").(string),
+		DestinationAddressInline: d.Get("destination_address_inline").(string),
+		DestinationPortList:      d.Get("destination_port_list").(string),
+		DestinationPortInline:    d.Get("destination_port_inline").(string),
+		SourceAddressList:        d.Get("source_address_list").(string),
+		SourceAddressInline:      d.Get("source_address_inline").(string),
+		SourcePortInline:         d.Get("source_port_inline").(int),
+	}
 }

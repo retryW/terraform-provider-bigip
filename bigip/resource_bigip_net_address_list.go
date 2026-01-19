@@ -12,7 +12,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/f5devcentral/go-bigip"
 	bigip "github.com/f5devcentral/go-bigip"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -58,11 +57,7 @@ func resourceBigipNetAddressListCreate(ctx context.Context, d *schema.ResourceDa
 	name := d.Get("name").(string)
 
 	log.Println("[INFO] Creating address list" + name)
-	addressList := &bigip.AddressList{
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
-		Addresses:   d.Get("addresses"),
-	}
+	addressList := addressListFromConfig(d)
 
 	err := client.AddAddressList(ctx, addressList)
 	if err != nil {
