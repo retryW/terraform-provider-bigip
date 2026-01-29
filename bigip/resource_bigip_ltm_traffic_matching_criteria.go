@@ -107,6 +107,8 @@ func resourceBigipLtmTrafficMatchingCriteriaCreate(ctx context.Context, d *schem
 		return diag.FromErr(fmt.Errorf("error creating traffic matching criteria (%s): %s", name, err))
 	}
 
+	d.SetId(name)
+
 	return resourceBigipLtmTrafficMatchingCriteriaRead(ctx, d, meta)
 }
 
