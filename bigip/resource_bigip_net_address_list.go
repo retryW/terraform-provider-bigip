@@ -64,6 +64,8 @@ func resourceBigipNetAddressListCreate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(fmt.Errorf("error creating address list (%s): %s", name, err))
 	}
 
+	d.SetId(name)
+
 	return resourceBigipNetAddressListRead(ctx, d, meta)
 }
 
