@@ -158,6 +158,7 @@ func Provider() *schema.Provider {
 			"bigip_ltm_virtual_address":             resourceBigipLtmVirtualAddress(),
 			"bigip_ltm_virtual_server":              resourceBigipLtmVirtualServer(),
 			"bigip_ltm_ifile":                       resourceBigipLtmIfile(),
+			"bigip_ltm_traffic_matching_criteria":   resourceBigipLtmTrafficMatchingCriteria(),
 			"bigip_sys_dns":                         resourceBigipSysDns(),
 			"bigip_sys_iapp":                        resourceBigipSysIapp(),
 			"bigip_sys_ntp":                         resourceBigipSysNtp(),
@@ -186,6 +187,7 @@ func Provider() *schema.Provider {
 			"bigip_ipsec_policy":                    resourceBigipIpsecPolicy(),
 			"bigip_net_tunnel":                      resourceBigipNetTunnel(),
 			"bigip_net_ike_peer":                    resourceBigipNetIkePeer(),
+			"bigip_net_address_list":                resourceBigipNetAddressList(),
 			"bigip_ipsec_profile":                   resourceBigipIpsecProfile(),
 			"bigip_waf_policy":                      resourceBigipAwafPolicy(),
 			"bigip_vcmp_guest":                      resourceBigipVcmpGuest(),
@@ -330,7 +332,7 @@ func mapEntity(d map[string]interface{}, obj interface{}) {
 
 // Convert Snakecase to Camelcase
 func toCamelCase(str string) string {
-	var link = regexp.MustCompile("(^[A-Za-z])|_([A-Za-z])")
+	link := regexp.MustCompile("(^[A-Za-z])|_([A-Za-z])")
 	return link.ReplaceAllStringFunc(str, func(s string) string {
 		return strings.ToUpper(strings.ReplaceAll(s, "_", ""))
 	})
@@ -338,8 +340,8 @@ func toCamelCase(str string) string {
 
 // Convert Camelcase to Snakecase
 func toSnakeCase(str string) string {
-	var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
-	var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
+	matchFirstCap := regexp.MustCompile("(.)([A-Z][a-z]+)")
+	matchAllCap := regexp.MustCompile("([a-z0-9])([A-Z])")
 	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
 	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
 	return strings.ToLower(snake)
