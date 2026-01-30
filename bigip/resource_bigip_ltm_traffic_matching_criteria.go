@@ -174,6 +174,11 @@ func resourceBigipLtmTrafficMatchingCriteriaDelete(ctx context.Context, d *schem
 }
 
 func NewTmcFromResourceData(d *schema.ResourceData) *bigip.TrafficMatchingCriteria {
+	// Even if SourceAddressList is in use, SourceAddressInline must be 0.0.0.0
+	sail := d.Get("source_address_inline").(string)
+	if len(sail) == 0 {
+		sail = "0.0.0.0"
+	}
 	return &bigip.TrafficMatchingCriteria{
 		Name:                     d.Get("name").(string),
 		Description:              d.Get("description").(string),
