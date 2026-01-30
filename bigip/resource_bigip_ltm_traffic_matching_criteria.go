@@ -175,6 +175,7 @@ func resourceBigipLtmTrafficMatchingCriteriaDelete(ctx context.Context, d *schem
 
 func NewTmcFromResourceData(d *schema.ResourceData) *bigip.TrafficMatchingCriteria {
 	return &bigip.TrafficMatchingCriteria{
+		Name:                     d.Get("name").(string),
 		Description:              d.Get("description").(string),
 		Protocol:                 d.Get("protocol").(string),
 		RouteDomain:              d.Get("route_domain").(string),

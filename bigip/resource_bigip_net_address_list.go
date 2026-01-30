@@ -127,7 +127,7 @@ func resourceBigipNetAddressListDelete(ctx context.Context, d *schema.ResourceDa
 
 func addressListFromConfig(d *schema.ResourceData) *bigip.AddressList {
 	al := &bigip.AddressList{
-		Name:        d.Id(),
+		Name:        d.Get("name").(string),
 		Description: d.Get("description").(string),
 	}
 
