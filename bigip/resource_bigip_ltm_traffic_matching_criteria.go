@@ -128,6 +128,12 @@ func resourceBigipLtmTrafficMatchingCriteriaRead(ctx context.Context, d *schema.
 		return diag.FromErr(err)
 	}
 
+	// Even if SourceAddressList is in use, SourceAddressInline must be 0.0.0.0
+	sail := d.Get("source_address_inline").(string)
+	if len(sail) == 0 {
+		sail = "0.0.0.0"
+	}
+
 	_ = d.Set("description", tmc.Description)
 	_ = d.Set("protocol", tmc.Protocol)
 	_ = d.Set("route_domain", tmc.RouteDomain)
@@ -136,7 +142,7 @@ func resourceBigipLtmTrafficMatchingCriteriaRead(ctx context.Context, d *schema.
 	_ = d.Set("destination_port_list", tmc.DestinationPortList)
 	_ = d.Set("destination_port_inline", tmc.DestinationPortInline)
 	_ = d.Set("source_address_list", tmc.SourceAddressList)
-	_ = d.Set("source_address_inline", tmc.SourceAddressInline)
+	_ = d.Set("source_address_inline", sail)
 	_ = d.Set("source_port_inline", tmc.SourcePortInline)
 
 	return nil
