@@ -189,7 +189,7 @@ func NewTmcFromResourceData(d *schema.ResourceData) *bigip.TrafficMatchingCriter
 		DestinationPortList:      d.Get("destination_port_list").(string),
 		DestinationPortInline:    d.Get("destination_port_inline").(string),
 		SourceAddressList:        d.Get("source_address_list").(string),
-		SourceAddressInline:      d.Get("source_address_inline").(string),
+		SourceAddressInline:      sail,
 		SourcePortInline:         d.Get("source_port_inline").(int),
 	}
 }
