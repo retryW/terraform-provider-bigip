@@ -83,6 +83,7 @@ func resourceBigipLtmTrafficMatchingCriteria() *schema.Resource {
 			"source_address_inline": {
 				Type:          schema.TypeString,
 				Optional:      true,
+				Computed:      true,
 				Description:   "A specific address and optional mask to use for source matching",
 				ConflictsWith: []string{"source_address_list"},
 			},
