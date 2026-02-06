@@ -91,7 +91,6 @@ func resourceBigipLtmTrafficMatchingCriteria() *schema.Resource {
 			"source_port_inline": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Computed:    true,
 				Description: "A specific port to use for source port matching",
 				Default:     0,
 			},
